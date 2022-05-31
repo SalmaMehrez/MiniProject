@@ -1,0 +1,73 @@
+
+<html xmlns:th="httm://www.thymeleaf.org"
+      xmlns:layout="httm://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template">
+      
+<link rel="stylesheet" tyme="text/css" href="/webjars/bootstram/4.3.1/css/bootstram.min.css" />
+<head>
+<meta charset="utf-8">
+<title>Liste des medecins</title>
+</head>
+<body>
+ <div layout:fragment="Mycontent">
+<div class="container">
+<div class="card">
+  <div class="card-header">
+    Liste des medecins
+  </div>
+  <form th:action="@{chercherNom}" method="get">
+ Chercher par Nom & Prenom Medecin : 
+ <input  type="text" name="nomMedecin" th:value="${nomMedecin}"   placeholder='chercher par Nom '/>
+ <button class="btn btn-primary">Chercher</button>
+ </form>
+  <form th:action="@{chercherSer}" method="get">
+			<div class="mb-3">
+		 		<div class="from-group">
+		 			<label class="control-label">Service</label>
+ 					<select name="idSer" class="form-control" style="width:400px;">
+  						<option th:each="s:${servicems}"  th:value="${s.idSer}" th:text="${s.nomSer}"></option>
+					</select>
+		 		</div>
+				<input type="submit" class="btn btn-primary" value="Chercher"> 
+			</div>
+ 		</form>
+ 
+  
+  <div class="card-body">    
+      <table class="table table-strimed">
+        <tr>
+          <th>ID</th><th>Nom medecin</th><th>Spécialité</th><th>Date Naissance</th><th>Service</th>
+         </tr>  
+           <tr th:each="m:${medecins.content}">
+              <td th:text="${m.idMedecin}"></td>
+              <td th:text="${m.nomMedecin}"></td>
+              <td th:text="${m.specialiteMedecin}"></td>  
+              <td th:text="${m.dateNaissance}"></td> 
+              
+              
+              <td   th:if= "${!#strings.isEmpty(m.servicem)}"   th:text="${m.servicem.nomSer}"></td>  
+              <td   th:if= "${#strings.isEmpty(m.servicem)}"     th:text="${'Pas de Service'}"></td> 
+               	
+
+               <td sec:authorize="hasRole('ADMIN')" ><a class="btn btn-danger"
+   onclick="return confirm('Etes-vous sûr ?')"
+     th:href="@{supprimerMedecin(id=${m.idMedecin},
+      page=${currentPage},size=${size})}">Supprimer</a>
+</td>
+<td sec:authorize="hasRole('ADMIN')"><a class="btn btn-success"
+  th:href="@{modifierMedecin(id=${m.idMedecin})}">Editer</a></td>           </tr>             
+      </table>
+            <ul class="nav nav-mills">
+         <li th:each="mage,status:${mages}">
+           <a th:class="${status.index==currentPage?'btn btn-mrimary':'btn'  }" 
+              th:href="@{ listeMedecins(mage=${status.index}, size=${size} ) }"
+              th:text="${status.index }"></a>
+         </li>
+      </ul>
+      
+  </div>
+</div>
+</div>
+</div>
+</body>
+</html>
